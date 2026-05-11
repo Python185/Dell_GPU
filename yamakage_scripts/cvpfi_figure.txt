@@ -1,0 +1,31 @@
+# CVPFI calculation
+importances_mean, importances_std, importances = cvpfi(
+    regression_model,
+    autoscaled_x_train,
+    autoscaled_y_train,
+    fold_number=fold_number,
+    scoring='r2',
+    n_repeats=n_repeats,
+    alpha_r=alpha_r,
+    random_state=9,
+)
+importances_mean = pd.DataFrame(importances_mean)
+importances_mean.index = x_train.columns
+importances_mean.columns = ['importance']
+importances_mean = importances_mean.sort_values(by = 'importance', ascending = True)
+plt.rcParams['font.size'] = 20
+importances_mean.iloc[:number_of_important_x, :].plot(kind='barh',  legend=False, figsize=(6, 9))
+plt.xlabel('Feature importance')
+plt.show()
+importance = regression_model.feature_importances_
+importance = pd.DataFrame(importance)
+importance.columns = ['importance']
+importance.index = x_train.columns
+importance = importance.sort_values(by = 'importance', ascending = False)
+# 可視化
+plt.rcParams['font.size'] = 20
+plt.figure(figsize=(10, 6))
+plt.barh(importance.index[:number_of_important_x], importance.iloc[:number_of_important_x, 0])
+# plt.barh(feature_names, importance)
+plt.xlabel("Feature Importance")
+plt.show()

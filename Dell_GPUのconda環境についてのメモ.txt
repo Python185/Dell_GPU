@@ -1,0 +1,6 @@
+spyderではcondaで切替え
+vscodeでは右下のinterpreter選択で切替え
+
+base:GPU不使用環境、基本的にdynabookと同等環境
+maki2:小部さんが作ったGPU環境にtabpfn等を追加した環境
+maki3:20250404にmaki2をコピーした環境
