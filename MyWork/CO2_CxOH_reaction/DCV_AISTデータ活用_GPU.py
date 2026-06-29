@@ -168,9 +168,9 @@ def dcv_analysis():
     log_transform = False    # False:対数変換なし　True:対数変換あり
     y_names = ['C3-OH selec (%)', 'C3-OH yield (%)']
     x_names = ['x5_as3']
-    regression_model_method_normals = ['OLS','PLS','RR','LASSO','NLSVR','DT','RF','GPR_0','GPR_1','GPR_2','GPR_3','GPR_4',
-                                        'GPR_5','GPR_6','GPR_7','GPR_8','GPR_9','GPR_10','GPR_11','GPR_12','GBDT','XGB','LGB']
-    #regression_model_method_normals = ['GPR_3','GPR_4','GPR_11','GPR_12']
+    #regression_model_method_normals = ['OLS','PLS','RR','LASSO','NLSVR','DT','RF','GPR_0','GPR_1','GPR_2','GPR_3','GPR_4',
+    #                                    'GPR_5','GPR_6','GPR_7','GPR_8','GPR_9','GPR_10','GPR_11','GPR_12','GBDT','XGB','LGB']
+    regression_model_method_normals = ['GPR_3','GPR_4','GPR_11','GPR_12']
     regression_model_method_GMM = ['GMR','VBGMR']
     
     outer_fold_number = 2  # 外側の分割数
@@ -541,8 +541,8 @@ def dcv_analysis():
                         shutil.move(f'{savedir}/{y_name}/yyplot/tempo/fig_{x_name}_{save_fig2}.png', f'{savedir}/{y_name}/yyplot/fig_{x_name}_{save_fig2}_.png')
                     # 結果の保存
                     predicted_y_values = pd.concat([raw_y,predicted_y_values],axis=1) # Y の推定値を格納
-                    predicted_y_values.to_csv(f'{savedir}/{y_name}/predicted_y_in_DCV/{x_name}_y_values_0.csv') # y の推定値を保存
-                    DCV_values.to_csv(f'{savedir}/{y_name}/prediction_accuracy/{x_name}_prediction_accuracy_0.csv') # 評価指標を保存
+                    predicted_y_values.to_csv(f'{savedir}/{y_name}/predicted_y_in_DCV/{x_name}_y_values_gpu.csv') # y の推定値を保存
+                    DCV_values.to_csv(f'{savedir}/{y_name}/prediction_accuracy/{x_name}_prediction_accuracy_gpu.csv') # 評価指標を保存
                     shutil.rmtree(f'{savedir}/{y_name}/yyplot/tempo/')
                     
             elif method_type == regression_model_method_GMM:
