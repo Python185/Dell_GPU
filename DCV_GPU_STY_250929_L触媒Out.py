@@ -50,21 +50,22 @@ def dcv_analysis():
     
     #ロジット変換、回帰条件の設定True
     log_transform = False    # False:対数変換なし　True:対数変換あり
-    y_names = ['選択率NPA', '収率NPA']
-    #y_names = ['NPA/ETA']
+    #y_names = ['選択率NPA', '収率NPA']
+    y_names = ['STY_ETANPA','NPAbyETA']
+    #y_names = ['NPAbyETA']
     #収率予測時、そのまま予測するか、転化率を予測して収率に換算するか
     yield_predict_method = 'direct'  #direct, indeirect より選択
     #転化率を予測するとき、転化率から収率への変換時にNPA選択率としてrawと predictedのどちらを使用するか
     NPA_selectivity = 'predicted'  #raw, predicted より選択
-    x_names = ['x4'] # x の設定
+    x_names = ['x1_mg_s'] # x の設定
     #regression_model_method_normals = ['OLS','PLS','RR','LASSO','EN','NLSVR','DT','RF','GPR_0','GPR_1','GPR_2','GPR_3','GPR_4',
     #                                    'GPR_5','GPR_6','GPR_7','GPR_8','GPR_9','GPR_10', 'GBDT','XGB','LGB', 'DNN_opt']
     #regression_model_method_normals = ['OLS','PLS','RR','LASSO','NLSVR','DT','RF','GPR_0','GPR_1','GPR_2','GPR_3','GPR_4',
     #                                   'GPR_5','GPR_6','GPR_7','GPR_8','GPR_9','GPR_10','GPR_11','GPR_12','GBDT','XGB','LGB']
-    regression_model_method_normals = ['GPR_11']
+    regression_model_method_normals = ['GPR_0']
     regression_model_method_GMM = ['GMR','VBGMR']
     
-    outer_fold_number = 2  # 外側の分割数。触媒が同じで評価方法が異なるサンプルをひとまとまりとして分割
+    outer_fold_number = 5  # 外側の分割数。触媒が同じで評価方法が異なるサンプルをひとまとまりとして分割
     random_state = 24  # 分割する際の乱数のシード。固定すれば再現性あり
     
     #各種定数、保存場所の設定
@@ -114,8 +115,8 @@ def dcv_analysis():
         if 'x29' in x_name:
             data = pd.read_parquet(f'datasets/{x_name}.csv')
         else:
-            data = pd.read_csv(f'datasets/v669/{x_name}.csv', index_col=0) # データの読み込み
-        #data = data.iloc[:100, :]
+            data = pd.read_csv(f'datasets/v749/{x_name}.csv', index_col=0) # データの読み込み
+        data = data.iloc[:20, :]
         #担体ごとにDCV解析する場合は下の行を使用し、allはコメントアウトする
         #tantai_name = [tan.replace('support_', '') for tan in data.columns if 'support' in tan and '*' not in tan]
         tantai_name = ['all']
@@ -491,23 +492,26 @@ def dcv_analysis():
                             y_min = np.min(np.array([raw_y, estimated_y_in_outer_cv.values.flatten()])) # y 値の最小を取得
                             if y_min <= 0:
                                 y_min = 0
-
-                            #plt.plot([y_min - 0.05 * (y_max - y_min), y_max + 0.05 * (y_max - y_min)],
-                            #        [y_min - 0.05 * (y_max - y_min), y_max + 0.05 * (y_max - y_min)], 'k-') # 対角線の描画
-                            #plt.ylim(y_min - 0.05 * (y_max - y_min), y_max + 0.05 * (y_max - y_min)) # Y のサイズ
-                            #plt.xlim(y_min - 0.05 * (y_max - y_min), y_max + 0.05 * (y_max - y_min)) # X のサイズ
                             if y_name == '選択率NPA':
-                                plt.plot([0, 10], [0, 10], 'k-') # 対角線の描画
-                                plt.ylim(0, 10) # Y のサイズ
-                                plt.xlim(0, 10) # X のサイズ    
+                                plt.plot([-0.2, 10], [-0.2, 10], 'k-') # 対角線の描画
+                                plt.ylim(-0.2, 10) # Y のサイズ
+                                plt.xlim(-0.2, 10) # X のサイズ    
                             elif y_name == '収率NPA':
-                                plt.plot([0, 1.0], [0, 1.0], 'k-') # 対角線の描画
-                                plt.ylim(0, 1.0) # Y のサイズ
-                                plt.xlim(0, 1.0) # X のサイズ
+                                plt.plot([-0.1, 1.5], [-0.1, 1.5], 'k-') # 対角線の描画
+                                plt.ylim(-0.1, 1.5) # Y のサイズ
+                                plt.xlim(-0.1, 1.5) # X のサイズ
+                            elif y_name == 'STY_ETANPA':
+                                plt.plot([-0.01, 0.2], [-0.01, 0.2], 'k-') # 対角線の描画
+                                plt.ylim(-0.01, 0.2) # Y のサイズ
+                                plt.xlim(-0.01, 0.2) # X のサイズ
+                            elif y_name == 'NPAbyETA':
+                                plt.plot([-0.05, 1.2], [-0.05, 1.2], 'k-') # 対角線の描画
+                                plt.ylim(-0.05, 1.2) # Y のサイズ
+                                plt.xlim(-0.05, 1.2) # X のサイズ                                                                
 
                             plt.xlabel('Actual Y') #　縦軸ラベル
                             plt.ylabel('Predicted Y in DCV') #　横軸ラベル
-                            plt.savefig(f'{savedir}/{y_name_safe}/yyplot/tempo/fig_{x_name}_{tantai}_{regression_model_method}.png',bbox_inches = 'tight') # 図の保存
+                            #plt.savefig(f'{savedir}/{y_name_safe}/yyplot/tempo/fig_{x_name}_{tantai}_{regression_model_method}.png',bbox_inches = 'tight') # 図の保存
                             #plt.show() # 図の描画
     
                             # 評価指標の計算
@@ -523,17 +527,17 @@ def dcv_analysis():
                         save_fig = DCV_values.loc[:, 'r2_DCV'].idxmax()
                         GP_rows = DCV_values.index[DCV_values.index.str.contains('GPR')]
                         save_GPR_fig = DCV_values.loc[GP_rows, 'r2_DCV'].idxmax()
-                        shutil.move(f'{savedir}/{y_name_safe}/yyplot/tempo/fig_{x_name}_{tantai}_{save_fig}.png', f'{savedir}/{y_name_safe}/yyplot/fig_{x_name}_{tantai}_{save_fig}_gpu.png')
-                        if 'GPR' not in save_fig:
-                            shutil.move(f'{savedir}/{y_name_safe}/yyplot/tempo/fig_{x_name}_{tantai}_{save_GPR_fig}.png', f'{savedir}/{y_name_safe}/yyplot/fig_{x_name}_{tantai}_{save_GPR_fig}_gpu.png')
-                        shutil.rmtree(f'{savedir}/{y_name_safe}/yyplot/tempo/')
+                        #shutil.move(f'{savedir}/{y_name_safe}/yyplot/tempo/fig_{x_name}_{tantai}_{save_fig}.png', f'{savedir}/{y_name_safe}/yyplot/fig_{x_name}_{tantai}_{save_fig}_gpu.png')
+                        #if 'GPR' not in save_fig:
+                        #    shutil.move(f'{savedir}/{y_name_safe}/yyplot/tempo/fig_{x_name}_{tantai}_{save_GPR_fig}.png', f'{savedir}/{y_name_safe}/yyplot/fig_{x_name}_{tantai}_{save_GPR_fig}_gpu.png')
+                        #shutil.rmtree(f'{savedir}/{y_name_safe}/yyplot/tempo/')
                         # 結果の保存
                         predicted_y_values = pd.concat([raw_y,predicted_y_values],axis=1) # Y の推定値を格納
-                        predicted_y_values.to_csv(f'{savedir}/{y_name_safe}/predicted_y_in_DCV/{x_name}_{tantai}_y_values_gup.csv', encoding= 'utf-8-sig') # y の推定値を保存
-                        DCV_values.to_csv(f'{savedir}/{y_name_safe}/prediction_accuracy/{x_name}_{tantai}_prediction_accuracy_gpu.csv') # 評価指標を保存
+                        #predicted_y_values.to_csv(f'{savedir}/{y_name_safe}/predicted_y_in_DCV/{x_name}_{tantai}_y_values_gup.csv', encoding= 'utf-8-sig') # y の推定値を保存
+                        #DCV_values.to_csv(f'{savedir}/{y_name_safe}/prediction_accuracy/{x_name}_{tantai}_prediction_accuracy_gpu.csv') # 評価指標を保存
     
                 elif method_type == regression_model_method_GMM:
-                    break
+                    #break
                     pass
                     y_raw = y_all.copy()
                     y_GMM = y_all.copy()
@@ -647,21 +651,23 @@ def dcv_analysis():
                             if y_name == '選択率NPA':
                                 plt.plot([-0.2, 6.2], [-0.2, 6.2], 'k-')
                             else:
-                                plt.plot([-0.1, 1.0], [-0.1, 1.0], 'k-')
+                                plt.plot([-0.1, 1.2], [-0.1, 1.2], 'k-')
                             #plt.ylim(y_min - 0.05 * (y_max - y_min), y_max + 0.05 * (y_max - y_min)) # Y のサイズ
                             #plt.xlim(y_min - 0.05 * (y_max - y_min), y_max + 0.05 * (y_max - y_min)) # X のサイズ
                             if y_name == '選択率NPA':
                                 plt.ylim(-0.2, 6.2) # Y のサイズ
                                 plt.xlim(-0.2, 6.2) # X のサイズ
-                            else:
-                                plt.ylim(-0.1, 1.0) # Y のサイズ
-                                plt.xlim(-0.1, 1.0) # X のサイズ                                
-                   
+                            elif y_name == 'STY_ETANPA':
+                                plt.ylim(-0.01, 0.2) # Y のサイズ
+                                plt.xlim(-0.01, 0.2) # X のサイズ
+                            elif y_name == 'NPAbyETA':
+                                plt.ylim(-0.05, 1.2)                               
+                                plt.xlim(-0.05, 1.2)
                             plt.xlabel('Actual Y') # 縦軸のラベル
                             plt.ylabel('Predicted Y in DCV') # 横軸のラベル
                             y_name_safe = sanitize_filename(y_name)
-                            plt.savefig(f'{savedir}/{y_name_safe}/yyplot/fig_{x_name}_{tantai}_{regression_model_method}.png', bbox_inches = 'tight') # 図の保存
-                            plt.show() # 図の描画
+                            plt.savefig(f'{savedir}/{y_name_safe}/yyplot/fig_{x_name}_{y_name_safe}_{tantai}_{regression_model_method}.png', bbox_inches = 'tight') # 図の保存
+                            #plt.show() # 図の描画
     
                             #r2, RMSE ,MAE
                             evaluation = np.zeros((3, 1))
