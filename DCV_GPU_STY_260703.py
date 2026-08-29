@@ -57,7 +57,7 @@ def dcv_analysis():
     yield_predict_method = 'direct'  #direct, indeirect より選択
     #転化率を予測するとき、転化率から収率への変換時にNPA選択率としてrawと predictedのどちらを使用するか
     NPA_selectivity = 'predicted'  #raw, predicted より選択
-    x_names = ['x2_sty_pc_NiHfCr'] # x の設定
+    x_names = ['x2_DOS_b'] # x の設定
     #regression_model_method_normals = ['OLS','PLS','RR','LASSO','EN','NLSVR','DT','RF','GPR_0','GPR_1','GPR_2','GPR_3','GPR_4',
     #                                    'GPR_5','GPR_6','GPR_7','GPR_8','GPR_9','GPR_10', 'GBDT','XGB','LGB', 'DNN_opt']
     #regression_model_method_normals = ['OLS','PLS','RR','LASSO','NLSVR','DT','RF','GPR_0','GPR_1','GPR_2','GPR_3','GPR_4',
