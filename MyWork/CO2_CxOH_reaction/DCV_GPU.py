@@ -169,14 +169,14 @@ def dcv_analysis():
     #ロジット変換、回帰条件の設定True
     log_transform = False    # False:対数変換なし　True:対数変換あり
     #y_names = ['C2 yield']
-    y_names = ['C3-OH selec (%)', 'C3-OH yield (%)']
-    x_names = ['x2_as1']
+    y_names = ['mae', 'C5_diff']
+    x_names = ['x1_as1']
     #regression_model_method_normals = ['OLS','PLS','RR','LASSO','NLSVR','DT','RF','GPR_0','GPR_1','GPR_2','GPR_3','GPR_4',
     #                                    'GPR_5','GPR_6','GPR_7','GPR_8','GPR_9','GPR_10','GPR_11','GPR_12','GBDT','XGB','LGB','TPFN']
     regression_model_method_normals = ['GPR_3','GPR_4','GPR_11','GPR_12']
     regression_model_method_GMM = ['GMR','VBGMR']
     
-    outer_fold_number = 2  # 外側の分割数
+    outer_fold_number = 5  # 外側の分割数
     random_state = 99  # 分割する際の乱数のシード。固定すれば再現性あり
     
     #各種定数、保存場所の設定

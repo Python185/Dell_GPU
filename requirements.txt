@@ -37,3 +37,4 @@ amplify
 cupy-cuda12x
 schedule
 playwright
+openai
