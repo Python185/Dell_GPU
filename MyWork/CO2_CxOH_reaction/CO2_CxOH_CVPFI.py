@@ -35,7 +35,7 @@ def main():
     #モデル選択     目的変数: [説明変数ベクトル名、　モデル名]
     #selection = {'C3-OH selec (%)':     ['x1_as3', 'LGB'],
     #             'C3-OH yield (%)':     ['x1_as3', 'LGB'],}
-    selection = {'mae':     ['x2_asf', 'RF'],}
+    selection = {'mae':     ['x2_c5', 'GPR_12'],}
 
     
     #  CVPFI calc and data output

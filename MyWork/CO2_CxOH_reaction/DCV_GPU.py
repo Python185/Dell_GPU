@@ -169,11 +169,11 @@ def dcv_analysis():
     #ロジット変換、回帰条件の設定True
     log_transform = False    # False:対数変換なし　True:対数変換あり
     #y_names = ['C2 yield']
-    y_names = ['mae', 'C5_diff']
-    x_names = ['x1_as1']
+    y_names = ['logR_C5']
+    x_names = ['x2_c5']
     #regression_model_method_normals = ['OLS','PLS','RR','LASSO','NLSVR','DT','RF','GPR_0','GPR_1','GPR_2','GPR_3','GPR_4',
     #                                    'GPR_5','GPR_6','GPR_7','GPR_8','GPR_9','GPR_10','GPR_11','GPR_12','GBDT','XGB','LGB','TPFN']
-    regression_model_method_normals = ['GPR_3','GPR_4','GPR_11','GPR_12']
+    regression_model_method_normals = ['GPR_3', 'GPR_4', 'GPR_11', 'GPR_12']
     regression_model_method_GMM = ['GMR','VBGMR']
     
     outer_fold_number = 5  # 外側の分割数
@@ -497,8 +497,8 @@ def dcv_analysis():
                         plt.scatter(raw_y, estimated_y_in_outer_cv, c='blue', alpha=0.7, edgecolors='black') # プロット
                         y_max = np.max(np.array([raw_y, estimated_y_in_outer_cv.values.flatten()])) # y 値の最大を取得
                         y_min = np.min(np.array([raw_y, estimated_y_in_outer_cv.values.flatten()])) # y 値の最小を取得
-                        if y_min <= 0:
-                            y_min = 0
+                        #if y_min <= 0:
+                        #    y_min = 0
                         #plt.plot([0, 40], [0, 40], 'k-')
                         #plt.ylim(0, 40) # 縦軸の範囲
                         #plt.xlim(0, 40)  
@@ -519,19 +519,20 @@ def dcv_analysis():
                         evaluation[0,0] = float(1 - sum((raw_y - estimated_y_in_outer_cv.values.flatten()) ** 2) / sum((raw_y - raw_y.mean()) ** 2)) # R2 の計算
                         evaluation[1,0] = float(sum(abs(raw_y - estimated_y_in_outer_cv.values.flatten())) / len(raw_y)) # MAE の計算
                         evaluation[2,0] = float((sum((raw_y - estimated_y_in_outer_cv.values.flatten()) ** 2) / len(raw_y)) ** 0.5) # RMSE の計算
-                        evaluation[3,0] = float(np.sqrt(np.sum(raw_y * np.square(raw_y - estimated_y_in_outer_cv.values.flatten()))/ np.sum(raw_y)))  #WRMSE の計算
+                        #evaluation[3,0] = float(np.sqrt(np.sum(raw_y * np.square(raw_y - estimated_y_in_outer_cv.values.flatten()))/ np.sum(raw_y)))  #WRMSE の計算
                         #x2_wrmse = np.sqrt(np.sum(x2_ce_a['選択率NPA'] * np.square((x2_ce_a['選択率NPA'] - x2_ce_a['RF']))) / np.sum(x2_ce_a['選択率NPA']))
                         DCV_values.loc[regression_model_method,:] = evaluation[:,0] # 評価指標を格納
                     print()
                     
                     #図の出力
                     save_fig = DCV_values.loc[:, 'r2_DCV'].idxmax()
-                    save_fig2 = DCV_values.loc[:, 'WRMSE_DCV'].idxmin()
-                    if save_fig == save_fig2:
-                        shutil.move(f'{savedir}/{y_name}/yyplot/tempo/fig_{x_name}_{save_fig}.png', f'{savedir}/{y_name}/yyplot/fig_{x_name}_{save_fig}.png')
-                    else:
-                        shutil.move(f'{savedir}/{y_name}/yyplot/tempo/fig_{x_name}_{save_fig}.png', f'{savedir}/{y_name}/yyplot/fig_{x_name}_{save_fig}.png')
-                        shutil.move(f'{savedir}/{y_name}/yyplot/tempo/fig_{x_name}_{save_fig2}.png', f'{savedir}/{y_name}/yyplot/fig_{x_name}_{save_fig2}.png')
+                    shutil.move(f'{savedir}/{y_name}/yyplot/tempo/fig_{x_name}_{save_fig}.png', f'{savedir}/{y_name}/yyplot/fig_{x_name}_{save_fig}.png')
+                    #save_fig2 = DCV_values.loc[:, 'WRMSE_DCV'].idxmin()
+                    #if save_fig == save_fig2:
+                    #    shutil.move(f'{savedir}/{y_name}/yyplot/tempo/fig_{x_name}_{save_fig}.png', f'{savedir}/{y_name}/yyplot/fig_{x_name}_{save_fig}.png')
+                    #else:
+                    #    shutil.move(f'{savedir}/{y_name}/yyplot/tempo/fig_{x_name}_{save_fig}.png', f'{savedir}/{y_name}/yyplot/fig_{x_name}_{save_fig}.png')
+                    #    shutil.move(f'{savedir}/{y_name}/yyplot/tempo/fig_{x_name}_{save_fig2}.png', f'{savedir}/{y_name}/yyplot/fig_{x_name}_{save_fig2}.png')
                     # 結果の保存
                     predicted_y_values = pd.concat([raw_y,predicted_y_values],axis=1) # Y の推定値を格納
                     predicted_y_values.to_csv(f'{savedir}/{y_name}/predicted_y_in_DCV/{x_name}_y_values_gpu.csv') # y の推定値を保存
